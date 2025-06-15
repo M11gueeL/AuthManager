@@ -1,0 +1,16 @@
+├── .htaccess
+├── index.php (todas la rutas)
+├── config/
+│ └── database.php (credenciales)
+├── core/
+│ ├── Database.php (clase de conexion a la db)
+│ └── AuthMiddleware.php
+├── modules/
+│ ├── usuarios/
+│ │ ├── UserController.php
+│ │ └── UserModel.php
+│ |
+│ └── auth/
+│ ├── AuthController.php
+│ └── AuthModel.php
+
