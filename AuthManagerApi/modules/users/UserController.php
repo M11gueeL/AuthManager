@@ -7,8 +7,16 @@ class UserController {
     }
     
     public function getUsers($id = null) {
+        // validar id numerico si existe
+        if ($id && !is_numeric($id)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+
+
         if ($id) {
-            $user = $this->userModel->getUserById($id);
+            $user = $this->userModel->getUserById((int)$id);
             if ($user) {
                 echo json_encode($user);
             } else {
@@ -61,7 +69,13 @@ class UserController {
     }
     
     public function deleteUser($id) {
-        $this->userModel->deleteUser($id);
-        echo json_encode(['message' => 'Usuario eliminado']);
+        $rowsAffected = $this->userModel->deleteUser($id);
+
+        if ($rowsAffected > 0) {
+            echo json_encode(['message' => 'Usuario eliminado']);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Usuario no encontrado o no eliminado']);
+        }     
     }
 }

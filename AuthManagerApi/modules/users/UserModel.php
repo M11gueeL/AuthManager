@@ -11,7 +11,7 @@ class UserModel {
         return $stmt->fetchAll();
     }
     
-    public function getUserById($id) {
+    public function getUserById(int $id) {
         $stmt = $this->db->query("SELECT id, name, username, email, registration_date, last_update, active FROM users WHERE id = ?", [$id]);
         return $stmt->fetch();
     }
@@ -33,7 +33,8 @@ class UserModel {
     }
     
     public function deleteUser($id) {
-        $this->db->query("DELETE FROM users WHERE id = ?", [$id]);
+        $stmt = $this->db->query("DELETE FROM users WHERE id = ?", [$id]);
+        return $stmt->rowCount(); // devuelve el numero de filas afectadas
     }
     
     public function getUserByUsername($username) {

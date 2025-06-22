@@ -67,7 +67,7 @@ try {
 
     switch ($resource) {
         case 'users':
-            $id = $uriSegments[2] ?? null;
+            $id = $uriSegments[1] ?? null;
             if ($action !== 'POST') {
                 $authMiddleware->authenticate();
             }
