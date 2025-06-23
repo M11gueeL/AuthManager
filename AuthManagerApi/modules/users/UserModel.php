@@ -26,10 +26,11 @@ class UserModel {
     }
     
     public function updateUser($id, $name, $username, $email) {
-        $this->db->query(
+        $stmt = $this->db->query(
             "UPDATE users SET name = ?, username = ?, email = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?",
             [$name, $username, $email, $id]
         );
+        return $stmt->rowCount(); // devuelve filas afectadas
     }
     
     public function deleteUser($id) {
