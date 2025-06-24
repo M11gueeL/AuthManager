@@ -68,9 +68,9 @@ try {
     switch ($resource) {
         case 'users':
             $id = $uriSegments[1] ?? null;
-            if ($action !== 'POST') {
-                $authMiddleware->authenticate();
-            }
+
+            // Todas las acciones requiren autenticación
+            $authMiddleware->authenticate();
             
             switch ($action) {
                 case 'GET':
@@ -128,14 +128,14 @@ try {
 }
 
 
-$action = $_SERVER['REQUEST_METHOD'];
-echo "\nMétodo HTTP: " . $action; // Para ver en logs
+// $action = $_SERVER['REQUEST_METHOD'];
+// echo "\nMétodo HTTP: " . $action; // Para ver en logs
 
-// Solo para diagnóstico - eliminar después
-echo "\n\nDEBUG INFO:\n";
-echo "SCRIPT_NAME: " . $_SERVER['SCRIPT_NAME'] . "\n";
-echo "SCRIPT_FILENAME: " . $_SERVER['SCRIPT_FILENAME'] . "\n";
-echo "REQUEST_URI: " . $_SERVER['REQUEST_URI'] . "\n";
-echo "Base Path Calculated: " . $scriptDir . "\n";
-echo "Processed URI: " . $requestUri . "\n";
-echo "URI Segments: " . print_r($uriSegments, true) . "\n";
+// // Solo para diagnóstico - eliminar después
+// echo "\n\nDEBUG INFO:\n";
+// echo "SCRIPT_NAME: " . $_SERVER['SCRIPT_NAME'] . "\n";
+// echo "SCRIPT_FILENAME: " . $_SERVER['SCRIPT_FILENAME'] . "\n";
+// echo "REQUEST_URI: " . $_SERVER['REQUEST_URI'] . "\n";
+// echo "Base Path Calculated: " . $scriptDir . "\n";
+// echo "Processed URI: " . $requestUri . "\n";
+// echo "URI Segments: " . print_r($uriSegments, true) . "\n";

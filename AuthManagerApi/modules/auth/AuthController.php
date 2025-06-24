@@ -9,10 +9,8 @@ class AuthController {
     }
     
     public function login() {
-
-         error_log("Solicitud de login recibida");
+        error_log("Solicitud de login recibida");
     
-        // Leer el input UNA SOLA VEZ
         $data = json_decode(file_get_contents('php://input'), true);
         error_log("Datos recibidos: " . print_r($data, true));
         
@@ -24,7 +22,6 @@ class AuthController {
         
         $user = $this->userModel->getUserByUsername($data['username']);
         
-        // Verificar primero si el usuario existe
         if (!$user) {
             error_log("Usuario no encontrado: " . $data['username']);
             http_response_code(401);
@@ -32,12 +29,8 @@ class AuthController {
             return;
         }
         
-        // Luego verificar la contraseña con logging
         if (!password_verify($data['password'], $user['password'])) {
             error_log("Contraseña incorrecta para usuario: " . $data['username']);
-            error_log("Hash almacenado: " . $user['password']);
-            error_log("Contraseña recibida: " . $data['password']);
-            
             http_response_code(401);
             echo json_encode(['error' => 'Credenciales inválidas']);
             return;
@@ -45,15 +38,16 @@ class AuthController {
         
         // Generar token
         $token = bin2hex(random_bytes(32));
-        $ipAddress = $_SERVER['REMOTE_ADDR'];
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
         
-        // Crear sesión
-        $this->authModel->createSession($user['id'], $token, $ipAddress, $userAgent);
+        // Crear token y sesión
+        $tokenId = $this->authModel->createSession($user['id'], $token, $ipAddress, $userAgent);
         
         echo json_encode([
             'token' => $token,
             'user_id' => $user['id'],
+            'expires_at' => date('c', time() + 3600), // ISO 8601
             'message' => 'Sesión iniciada'
         ]);
     }
@@ -67,7 +61,8 @@ class AuthController {
             $this->authModel->invalidateSession($token);
             echo json_encode(['message' => 'Sesión cerrada']);
         } else {
-            throw new Exception('Token no proporcionado', 400);
+            http_response_code(400);
+            echo json_encode(['error' => 'Token no proporcionado']);
         }
     }
 }

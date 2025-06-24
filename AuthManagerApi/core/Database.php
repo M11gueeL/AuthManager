@@ -23,7 +23,17 @@ class Database {
             $stmt->execute($params);
             return $stmt;
         } catch (PDOException $e) {
-            throw new Exception("Error en consulta: " . $e->getMessage());
+
+            // Manejar errores de duplicados especificos 'usernmame' y 'emial'
+            if ($e->getCode() == '23000') {
+
+                if (strpos($e->getMessage(), 'username') !== false) {
+                    throw new Exception('El nombre de usuario ya está en uso', 409);
+                } elseif (strpos($e->getMessage(), 'email') !== false) {
+                    throw new Exception('El email ya está registrado', 409);
+                }
+            }
+            throw new Exception("Error en la operación: " . $e->getMessage());
         }
     }
     

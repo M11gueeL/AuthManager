@@ -34,66 +34,78 @@ class UserController {
         
         if (empty($data['name']) || empty($data['username']) || empty($data['email']) || empty($data['password'])) {
             http_response_code(400);
-            echo json_encode(['error' => 'Datos incompletos']);
+            echo json_encode(['error' => 'Todos los campos son requeridos: nombre, username, email y password']);
             return;
         }
         
-        $id = $this->userModel->createUser(
-            $data['name'],
-            $data['username'],
-            $data['email'],
-            $data['password']
-        );
-        
-        http_response_code(201);
-        echo json_encode(['id' => $id, 'message' => 'Usuario creado']);
+        try {
+            $id = $this->userModel->createUser(
+                $data['name'],
+                $data['username'],
+                $data['email'],
+                $data['password']
+            );
+            
+            http_response_code(201);
+            echo json_encode([
+                'id' => $id,
+                'message' => 'Usuario creado exitosamente',
+                'user' => [
+                    'username' => $data['username'],
+                    'email' => $data['email']
+                ]
+            ]);
+        } catch (Exception $e) {
+            http_response_code($e->getCode() ?: 500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
     }
     
     public function updateUser($id) {
-        // validar el id
         if (!is_numeric($id)) {
             http_response_code(400);
-            echo json_encode(['error' => 'ID Inválido']);
+            echo json_encode(['error' => 'ID de usuario inválido']);
             return;
         }
 
         $data = json_decode(file_get_contents('php://input'), true);
         
-        // válidar datos requeridos
         $required = ['name', 'username', 'email'];
         foreach ($required as $field) {
             if (empty($data[$field])) {
                 http_response_code(400);
-                echo json_encode(['error' => "Campo '$field' es requerido"]);
+                echo json_encode(['error' => "El campo '$field' es requerido"]);
                 return;
             }
         }
 
-        // Verificar existencia del usuario
-        $existingUser = $this->userModel->getUserById((int)$id);
-        if (!$existingUser) {
-            http_response_code(404);
-            echo json_encode(['error' => 'Usuario no encontrado']);
-            return;
-        }
+        try {
+            $rowsAffected = $this->userModel->updateUser(
+                (int)$id,
+                $data['name'],
+                $data['username'],
+                $data['email']
+            );
 
-        // Realizar actualización 
-        $rowsAffected = $this->userModel->updateUser(
-            (int)$id,
-            $data['name'],
-            $data['username'],
-            $data['email']
-        );
-
-        // Validar resultado
-        if ($rowsAffected > 0) {
-            echo json_encode(['message' => 'Usuario actulizado']);
-        } else {
-            http_response_code(500);
-            echo json_encode(['error' => 'No se realizaron los cambios']);
+            if ($rowsAffected > 0) {
+                echo json_encode([
+                    'message' => 'Usuario actualizado exitosamente',
+                    'changes' => [
+                        'name' => $data['name'],
+                        'username' => $data['username'],
+                        'email' => $data['email']
+                    ]
+                ]);
+            } else {
+                http_response_code(404);
+                echo json_encode(['error' => 'No se encontró el usuario o no se realizaron cambios']);
+            }
+        } catch (Exception $e) {
+            http_response_code($e->getCode() ?: 500);
+            echo json_encode(['error' => $e->getMessage()]);
         }
     }
-    
+
     public function deleteUser($id) {
         $rowsAffected = $this->userModel->deleteUser($id);
 
