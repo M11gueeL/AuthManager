@@ -5,3 +5,7 @@ AuthManager-app/src/css/style.css
 AuthManagerApi/config/Database.php
 AuthManagerApi/cosasVarias.js
 AuthManagerApi/core/estructuraAPI.txt
+
+
+auth-app/node_modules
+auth-app/package-lock.json
