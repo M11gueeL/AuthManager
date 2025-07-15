@@ -52,6 +52,7 @@ export const getUser = async (id, token) => {
 
   if (!response.ok) throw new Error("Error al obtener usuario");
   return await response.json();
+  
 };
 
 export const createUser = async (userData, token) => {
@@ -72,12 +73,14 @@ export const createUser = async (userData, token) => {
     throw new Error("Token inválido o expirado");
   }
 
+  const responseData = await response.json();
+
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al crear usuario");
+    // Aquí es donde capturamos el error recibido de la API
+    throw new Error(responseData.error || "Error al crear usuario");
   }
 
-  return await response.json();
+  return responseData;
 };
 
 export const updateUser = async (id, userData, token) => {
@@ -98,12 +101,14 @@ export const updateUser = async (id, userData, token) => {
     throw new Error("Token inválido o expirado");
   }
 
+  const responseData = await response.json();
+  
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al actualizar usuario");
+    // Capturamos el error recibido de la API
+    throw new Error(responseData.error || "Error al actualizar usuario");
   }
 
-  return await response.json();
+  return responseData;
 };
 
 export const deleteUser = async (id, token) => {

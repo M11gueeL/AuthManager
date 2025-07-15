@@ -15,9 +15,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100  flex flex-col">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm rounded-2xl">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800">
             Panel de Administración
@@ -27,8 +27,9 @@ const Dashboard = () => {
             disabled={logoutLoading}
             className={`px-4 py-2 rounded-md font-medium ${
               logoutLoading
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-red-600 hover:bg-red-700 text-white"
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white hover:scale-105"
+
             } transition-colors`}
           >
             {logoutLoading ? "Cerrando sesión..." : "Cerrar sesión"}
@@ -73,7 +74,7 @@ const Dashboard = () => {
               Resumen del Sistema
             </h2>
             <p className="text-gray-600">
-              Bienvenido al panel de administración
+              Bienvenido al mi proyecto autenticación de usuarios con CRUD
             </p>
           </div>
         )}
@@ -87,6 +88,9 @@ const Dashboard = () => {
             </h2>
             <p className="text-gray-600">
               Opciones de configuración del sistema
+            </p>
+            <p className="text-gray-600">
+              Esta ventana es de ejemplo
             </p>
           </div>
         )}

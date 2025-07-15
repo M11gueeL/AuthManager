@@ -2,8 +2,8 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./layouts/layout";
 import PublicRoute from "./routes/PublicRoute";
-import LoginPage from "./pages/auth//LoginPage";
-import Dashboard from "./pages/dashboard/dashboard";
+import LoginPage from "./components/auth//LoginPage";
+import Dashboard from "./components/dashboard/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 
