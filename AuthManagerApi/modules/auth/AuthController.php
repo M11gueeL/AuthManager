@@ -65,4 +65,26 @@ class AuthController {
             echo json_encode(['error' => 'Token no proporcionado']);
         }
     }
+
+    public function getProfile() {
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? '';
+        
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+            $session = $this->authModel->getSessionByToken($token);
+            
+            if (!$session) {
+                http_response_code(401);
+                echo json_encode(['error' => 'Sesión no válida']);
+                return;
+            }
+            
+            $user = $this->userModel->getUserById($session['user_id']);
+            echo json_encode($user);
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Token no proporcionado']);
+        }
+    }
 }

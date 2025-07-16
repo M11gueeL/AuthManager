@@ -1,4 +1,5 @@
 <?php
+
 class UserModel {
     private $db;
     
@@ -17,7 +18,6 @@ class UserModel {
     }
     
     public function createUser($name, $username, $email, $password) {
-
         // Verificar duplicados
         if ($this->usernameExists($username)) {
             throw new Exception("El nombre de usuario ya está en uso", 409);
@@ -37,7 +37,6 @@ class UserModel {
     }
     
     public function updateUser($id, $name, $username, $email) {
-
         // Verificar si el nuevo username/email ya existe en otros usuarios
         $existing = $this->getUserById($id);
 
@@ -54,12 +53,12 @@ class UserModel {
             [$name, $username, $email, $id]
         );
 
-        return $stmt->rowCount(); // devuelve filas afectadas
+        return $stmt->rowCount();
     }
     
     public function deleteUser($id) {
         $stmt = $this->db->query("DELETE FROM users WHERE id = ?", [$id]);
-        return $stmt->rowCount(); // devuelve el numero de filas afectadas
+        return $stmt->rowCount();
     }
     
     public function getUserByUsername($username) {
