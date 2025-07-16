@@ -1,4 +1,4 @@
-const API_URL = "http://localhost/authmanager/authmanagerapi/users/";
+const API_URL = "http://localhost/authmanager/authmanagerapi/public/users/";
 
 export const getUsers = async (token) => {
   const response = await fetch(API_URL, {

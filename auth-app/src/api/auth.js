@@ -1,7 +1,7 @@
 export const login = async (credentials) => {
   // Simulación de llamada API
   const response = await fetch(
-    "http://localhost/authmanager/authmanagerapi/auth/login",
+    "http://localhost/authmanager/authmanagerapi/public/auth/login",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -18,7 +18,7 @@ export const login = async (credentials) => {
 export const logout = async (token) => {
   try {
     const response = await fetch(
-      "http://localhost/authmanager/authmanagerapi/auth/logout",
+      "http://localhost/authmanager/authmanagerapi/public/auth/logout",
       {
         method: "POST",
         headers: {
