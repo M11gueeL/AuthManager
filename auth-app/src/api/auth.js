@@ -40,6 +40,10 @@ export const logout = async (token) => {
 };
 
 export const getSessions = async (token) => {
+  if (!token) {
+    throw new Error("Token de autenticación no proporcionado");
+  }
+
   try {
     const response = await fetch(
       "http://localhost/authmanager/authmanagerapi/public/auth/sessions",
@@ -68,6 +72,36 @@ export const getSessions = async (token) => {
     return await response.json();
   } catch (error) {
     console.error("Error en getSessions:", error);
+    throw error;
+  }
+};
+
+// Función para obtener el perfil del usuario autenticado
+export const getUserProfile = async (token) => {
+  
+  if (!token) {
+    throw new Error("Token de autenticación no proporcionado");
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost/authmanager/authmanagerapi/public/auth/profile",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error al obtener el perfil del usuario");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al obtener los datos del usuario", error);
     throw error;
   }
 };

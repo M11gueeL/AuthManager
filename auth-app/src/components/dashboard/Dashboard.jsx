@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import UserManagementPanel from "../users/UserManagementPanel";
 import UserSessionHistoryPanel from "../users/UserSessionHistoryPanel";
+import UserProfilePanel from "../users/UserProfilePanel";
+import WelcomePanel from "./WelcomePanel";
 
 const Dashboard = () => {
   const { logout, logoutLoading, logoutError } = useAuth();
@@ -42,7 +44,7 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
-            {["overview", "users", "history"].map((tab) => (
+            {["overview", "users", "history", "profile"].map((tab) => (
               <button
                 key={tab}
                 className={`py-4 px-1 text-sm font-medium border-b-2 whitespace-nowrap ${
@@ -55,6 +57,7 @@ const Dashboard = () => {
                 {tab === "overview" && "Resumen"}
                 {tab === "users" && "Usuarios"}
                 {tab === "history" && "Historial de Sesiones"}
+                {tab === "profile" && "Mi Perfil"}
               </button>
             ))}
           </nav>
@@ -63,26 +66,13 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-6 sm:px-6 lg:px-8">
-        {logoutError && (
-          <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md">
-            {logoutError}
-          </div>
-        )}
-
-        {activeTab === "overview" && (
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Resumen del Sistema
-            </h2>
-            <p className="text-gray-600">
-              Bienvenido al mi proyecto autenticación de usuarios con CRUD
-            </p>
-          </div>
-        )}
+        {activeTab === "overview" && <WelcomePanel />}
 
         {activeTab === "users" && <UserManagementPanel />}
 
         {activeTab === "history" && <UserSessionHistoryPanel />}
+
+        {activeTab === "profile" && <UserProfilePanel />}
       </main>
     </div>
   );

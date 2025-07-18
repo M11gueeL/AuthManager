@@ -1,7 +1,7 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect, useCallback } from "react";
 import { logout as apiLogout } from "../api/auth";
 import { getSessions } from "../api/auth";
+import { getUserProfile } from "../api/auth"; // Asegúrate de importar la función correcta
 
 const AuthContext = createContext();
 
@@ -18,6 +18,9 @@ export const AuthProvider = ({ children }) => {
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(false);
   const [sessionsError, setSessionsError] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [ProfileLoading, setProfileLoading] = useState(false);
+  const [ProfileError, setProfileError] = useState(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -57,7 +60,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Memoizar fetchSessions con useCallback
+  // Memorizar fetchSessions con useCallback
   const fetchSessions = useCallback(async () => {
     if (!token) return;
     
@@ -73,6 +76,29 @@ export const AuthProvider = ({ children }) => {
       setSessionsLoading(false);
     }
   }, [token]); // Dependencia: token
+  
+  const fetchUserProfile = useCallback(async () => {
+    if (!token) return;
+
+    try {
+      setProfileLoading(true);
+      const profileData = await getUserProfile(token);
+      setUserProfile(profileData);
+      setProfileError(null);
+    } catch (err) {
+      setProfileError(err.message || "Error al cargar el perfil del usuario");
+      console.error("Error fetching user profile:", err);
+    } finally {
+      setProfileLoading(false);
+    }
+  }, [token]); // Dependencia: token
+
+  // Cargar el perfil cuando el token cambie
+  useEffect(() => {
+    if (token) {
+      fetchUserProfile();
+    }
+  }, [token, fetchUserProfile]);
 
   return (
     <AuthContext.Provider
@@ -88,6 +114,10 @@ export const AuthProvider = ({ children }) => {
         sessionsLoading,
         sessionsError,
         fetchSessions, // Añadido para obtener sesiones
+        userProfile,
+        ProfileLoading, 
+        ProfileError,
+        fetchUserProfile, // Añadido para obtener el perfil del usuario
       }}
     >
       {children}
