@@ -61,12 +61,33 @@ class AuthModel {
     
     public function getSessionByToken($token) {
         $stmt = $this->db->query(
-            "SELECT us.*, t.token, t.expires_at 
+            "SELECT us.*, u.name, u.username, u.email 
              FROM user_sessions us
              JOIN tokens t ON us.token_id = t.id
+             JOIN users u ON u.id = us.user_id
              WHERE t.token = ?",
             [$token]
         );
         return $stmt->fetch();
+    }
+
+    // Método para obtener todas las sesiones
+    public function getAllSessions() {
+        $query = "SELECT 
+                us.id AS session_id,
+                us.start_date,
+                us.end_date,
+                us.ip_address,
+                us.user_agent,
+                us.active,
+                u.id AS user_id,
+                u.name,
+                u.username,
+                u.email
+              FROM user_sessions us
+              JOIN users u ON us.user_id = u.id";
+        
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll();
     }
 }

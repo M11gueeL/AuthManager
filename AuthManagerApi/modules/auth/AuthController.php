@@ -72,6 +72,14 @@ class AuthController {
         
         if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             $token = $matches[1];
+            
+            // Validar el token primero
+            if (!$this->authModel->validateToken($token)) {
+                http_response_code(401);
+                echo json_encode(['error' => 'Token inválido o sesión expirada']);
+                return;
+            }
+            
             $session = $this->authModel->getSessionByToken($token);
             
             if (!$session) {
@@ -80,11 +88,63 @@ class AuthController {
                 return;
             }
             
-            $user = $this->userModel->getUserById($session['user_id']);
-            echo json_encode($user);
+            // Construir la respuesta con datos de usuario y sesión
+            $response = [
+                'id' => $session['user_id'],
+                'name' => $session['name'],
+                'username' => $session['username'],
+                'email' => $session['email'],
+                'session' => [
+                    'id' => $session['id'],
+                    'start_date' => date('Y-m-d H:i:s', strtotime($session['start_date'])),
+                    'end_date' => $session['end_date'] ? date('Y-m-d H:i:s', strtotime($session['end_date'])) : null,
+                    'ip_address' => $session['ip_address'],
+                    'user_agent' => $session['user_agent'],
+                    'active' => (bool)$session['active']
+                ]
+            ];
+            
+            echo json_encode($response);
         } else {
             http_response_code(400);
             echo json_encode(['error' => 'Token no proporcionado']);
         }
     }
+
+    public function listSessions() {
+        // Verficar token válido
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? '';
+
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+            
+            if (!$this->authModel->validateToken($token)) {
+                http_response_code(401);
+                echo json_encode(['error' => 'Token no válido o sesión expirada']);
+                return;
+            }
+            
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Token no proporcionado']);
+            return;
+        }
+
+        // Obtener todas las sesiones
+        $sessions = $this->authModel->getAllSessions();
+
+        // Formatear fechas para mejor legibilidad
+        foreach ($sessions as &$session) {
+            $session['start_date'] = date('Y-m-d H:i:s', strtotime($session['start_date']));
+
+            if ($session['end_date']) {
+                $session['end_date'] = date('Y-m-d H:i:s', strtotime($session['end_date']));
+            } else {
+                $session['end_date'] = null; // Si no hay fecha de fin, establecer como null
+            }
+    }
+    echo json_encode($sessions);
+    }
+    
 }

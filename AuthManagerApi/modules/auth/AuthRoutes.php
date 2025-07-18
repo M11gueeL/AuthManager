@@ -19,5 +19,6 @@ class AuthRoutes {
         $router->add('POST', 'auth/login', [$authController, 'login']);
         $router->add('POST', 'auth/logout', [$authController, 'logout']);
         $router->add('GET', 'auth/profile', [$authController, 'getProfile']);
+        $router->add('GET', 'auth/sessions', [$authController, 'listSessions']);
     }
 }
