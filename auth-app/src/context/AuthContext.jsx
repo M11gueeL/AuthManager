@@ -1,6 +1,7 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect, useCallback } from "react";
 import { logout as apiLogout } from "../api/auth";
+import { getSessions } from "../api/auth";
 
 const AuthContext = createContext();
 
@@ -14,6 +15,9 @@ export const AuthProvider = ({ children }) => {
   const [authLoading, setAuthLoading] = useState(true); // Cambiamos a authLoading
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [logoutError, setLogoutError] = useState(null);
+  const [sessions, setSessions] = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [sessionsError, setSessionsError] = useState(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -53,6 +57,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Memoizar fetchSessions con useCallback
+  const fetchSessions = useCallback(async () => {
+    if (!token) return;
+    
+    try {
+      setSessionsLoading(true);
+      const sessionsData = await getSessions(token);
+      setSessions(sessionsData);
+      setSessionsError(null);
+    } catch (err) {
+      setSessionsError(err.message || "Error al cargar sesiones");
+      console.error("Error fetching sessions:", err);
+    } finally {
+      setSessionsLoading(false);
+    }
+  }, [token]); // Dependencia: token
+
   return (
     <AuthContext.Provider
       value={{
@@ -63,6 +84,10 @@ export const AuthProvider = ({ children }) => {
         logoutError,
         login,
         logout,
+        sessions,
+        sessionsLoading,
+        sessionsError,
+        fetchSessions, // Añadido para obtener sesiones
       }}
     >
       {children}

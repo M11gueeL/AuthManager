@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import UserManagementPanel from "../users/UserManagementPanel";
+import UserSessionHistoryPanel from "../users/UserSessionHistoryPanel";
 
 const Dashboard = () => {
   const { logout, logoutLoading, logoutError } = useAuth();
@@ -41,7 +42,7 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
-            {["overview", "users", "settings"].map((tab) => (
+            {["overview", "users", "history"].map((tab) => (
               <button
                 key={tab}
                 className={`py-4 px-1 text-sm font-medium border-b-2 whitespace-nowrap ${
@@ -53,7 +54,7 @@ const Dashboard = () => {
               >
                 {tab === "overview" && "Resumen"}
                 {tab === "users" && "Usuarios"}
-                {tab === "settings" && "Configuración"}
+                {tab === "history" && "Historial de Sesiones"}
               </button>
             ))}
           </nav>
@@ -81,19 +82,7 @@ const Dashboard = () => {
 
         {activeTab === "users" && <UserManagementPanel />}
 
-        {activeTab === "settings" && (
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Configuración de la Cuenta
-            </h2>
-            <p className="text-gray-600">
-              Opciones de configuración del sistema
-            </p>
-            <p className="text-gray-600">
-              Esta ventana es de ejemplo
-            </p>
-          </div>
-        )}
+        {activeTab === "history" && <UserSessionHistoryPanel />}
       </main>
     </div>
   );

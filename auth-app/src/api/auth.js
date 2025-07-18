@@ -38,3 +38,36 @@ export const logout = async (token) => {
     throw error;
   }
 };
+
+export const getSessions = async (token) => {
+  try {
+    const response = await fetch(
+      "http://localhost/authmanager/authmanagerapi/public/auth/sessions",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      // Intentar obtener mensaje de error del cuerpo de la respuesta
+      let errorMsg = "Error al obtener las sesiones";
+      try {
+        const errorData = await response.json();
+        errorMsg = errorData.message || errorMsg;
+      } catch (e) {
+        // Si no podemos parsear el error, usar el status
+        errorMsg = `${errorMsg} (${response.status})`;
+      }
+      throw new Error(errorMsg);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getSessions:", error);
+    throw error;
+  }
+};
