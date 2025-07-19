@@ -1,7 +1,9 @@
 <?php
-
 require_once '../config/database.php';
 require_once '../core/Router.php';
+require_once '../core/AuthMiddleware.php'; // Asegúrate de incluir esto
+require_once '../modules/auth/AuthModel.php';
+require_once '../modules/users/UserModel.php';
 require_once '../modules/auth/AuthRoutes.php';
 require_once '../modules/users/UserRoutes.php';
 
@@ -17,22 +19,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-// Obtener la URL solicitada desde el parámetro 'url'
-$requestUrl = isset($_GET['url']) ? $_GET['url'] : '';
-$requestUri = trim($requestUrl, '/'); // Usa esto en lugar de REQUEST_URI
-$requestMethod = $_SERVER['REQUEST_METHOD'];
+// Crear instancias esenciales
+$dbConfig = require __DIR__ . '/../config/database.php';
+$db = new Database($dbConfig);
 
-// Crear una instancia del enrutador
+// Crear middleware de autenticación
+$authMiddleware = new AuthMiddleware(new AuthModel($db));
+
+// Crear enrutador
 $router = new Router();
+$router->registerMiddleware('auth', $authMiddleware); // Registrar middleware
 
-// Registrar las rutas de autenticación y usuarios
+// Registrar rutas
 AuthRoutes::register($router);
 UserRoutes::register($router);
 
-// Despachar la solicitud
-$router->dispatch($requestUri, $requestMethod);
-
-// Log de depuración
-error_log("REQUEST_URI: " . $_SERVER['REQUEST_URI']);
-error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
+// Despachar solicitud
+$requestUrl = isset($_GET['url']) ? $_GET['url'] : '';
+$router->dispatch(trim($requestUrl, '/'), $_SERVER['REQUEST_METHOD']);
 

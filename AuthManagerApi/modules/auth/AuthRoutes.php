@@ -15,10 +15,12 @@ class AuthRoutes {
             new UserModel($db) // Usa la misma instancia de DB
         );
 
-        // Usa la instancia creada en lugar de llamadas estáticas
+        // Login público (sin middleware)
         $router->add('POST', 'auth/login', [$authController, 'login']);
-        $router->add('POST', 'auth/logout', [$authController, 'logout']);
-        $router->add('GET', 'auth/profile', [$authController, 'getProfile']);
-        $router->add('GET', 'auth/sessions', [$authController, 'listSessions']);
+        
+        // Rutas protegidas
+        $router->add('POST', 'auth/logout', [$authController, 'logout'], 'auth');
+        $router->add('GET', 'auth/profile', [$authController, 'getProfile'], 'auth');
+        $router->add('GET', 'auth/sessions', [$authController, 'listSessions'], 'auth');
     }
 }

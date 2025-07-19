@@ -9,16 +9,13 @@ class UserRoutes {
     public static function register($router) {
         $dbConfig = require __DIR__ . '/../../config/database.php';
         $db = new Database($dbConfig);
-        
-        $userController = new UserController(
-            new UserModel($db)
-        );
+        $userController = new UserController(new UserModel($db));
 
-        // Registra las rutas usando la instancia del controlador
-        $router->add('GET', 'users', [$userController, 'getUsers']);
-        $router->add('GET', 'users/{id}', [$userController, 'getUsers']);
-        $router->add('POST', 'users', [$userController, 'createUser']);
-        $router->add('PUT', 'users/{id}', [$userController, 'updateUser']);
-        $router->add('DELETE', 'users/{id}', [$userController, 'deleteUser']);
+        // Todas las rutas protegidas con middleware 'auth'
+        $router->add('GET', 'users', [$userController, 'getUsers'], 'auth');
+        $router->add('GET', 'users/{id}', [$userController, 'getUsers'], 'auth');
+        $router->add('POST', 'users', [$userController, 'createUser'], 'auth');
+        $router->add('PUT', 'users/{id}', [$userController, 'updateUser'], 'auth');
+        $router->add('DELETE', 'users/{id}', [$userController, 'deleteUser'], 'auth');
     }
 }
