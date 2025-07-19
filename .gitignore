@@ -1,11 +1,6 @@
-
-AuthManager-app/node_modules
-AuthManager-app/src/css/style.css
-
 AuthManagerApi/config/Database.php
-AuthManagerApi/cosasVarias.js
 AuthManagerApi/core/estructuraAPI.txt
-
+AuthManagerApi/public/.env
+AuthManagerApi/vendor
 
 auth-app/node_modules
-auth-app/package-lock.json

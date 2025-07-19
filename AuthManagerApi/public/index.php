@@ -1,4 +1,18 @@
 <?php
+require_once __DIR__. '/../vendor/autoload.php'; 
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ ); // Cargar variables de entorno
+
+$dotenv->load(); // Cargar las variables de entorno
+
+// Validar que las variables de entorno estén definidas
+$dotenv->required([
+    'DB_HOST',
+    'DB_NAME',
+    'DB_USERNAME',
+    'DB_PASSWORD'   
+])->notEmpty();
+
 require_once '../config/database.php';
 require_once '../core/Router.php';
 require_once '../core/AuthMiddleware.php'; // Asegúrate de incluir esto
